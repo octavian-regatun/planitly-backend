@@ -7,8 +7,8 @@
             "driver": "PostgreSQL",
             "name": "planitly",
             "database": "planitly",
-            "username": "octavianregatun",
-            "password": "#Gibon923"
+            "username": "postgres",
+            "password": "admin"
         }
     ]
 }
