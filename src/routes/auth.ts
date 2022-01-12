@@ -8,7 +8,7 @@ import { isUserInDatabase, saveUser } from '../lib/user'
 
 const authRouter = Router()
 
-interface Body{
+interface Body {
   tokenId?: string
 }
 
@@ -20,8 +20,10 @@ authRouter.post('/', (req, res) => {
 
     const payload = await getPayload(tokenId)
 
-    if (await isUserInDatabase(parseInt(payload.sub, 10))) {
-      const existingUser = await db.user.findUnique({ where: { id: parseInt(payload.sub, 10) } }) as User
+    if (await isUserInDatabase(payload.sub)) {
+      const existingUser = await db.user.findUnique({
+        where: { id: payload.sub }
+      }) as User
 
       return res.send(createJwt(existingUser))
     } else {
@@ -29,7 +31,7 @@ authRouter.post('/', (req, res) => {
 
       const jwt = createJwt(newUser)
 
-      res.send(jwt)
+      return res.send(jwt)
     }
   })()
 })

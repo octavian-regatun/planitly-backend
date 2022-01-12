@@ -1,7 +1,7 @@
 import { User } from '@prisma/client'
 import { OAuth2Client, TokenPayload } from 'google-auth-library'
-import { GOOGLE_CLIENT_ID, JWT_SECRET } from './constants'
 import jwt from 'jsonwebtoken'
+import { GOOGLE_CLIENT_ID, JWT_SECRET } from './constants'
 
 export async function getPayload (tokenId: string): Promise<TokenPayload> {
   const oauth2Client = new OAuth2Client(GOOGLE_CLIENT_ID)
