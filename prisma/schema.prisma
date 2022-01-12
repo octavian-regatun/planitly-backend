@@ -8,24 +8,24 @@ datasource db {
 }
 
 model Event {
-  id             Int       @id @default(autoincrement())
-  title          String    @db.VarChar(255)
+  id             Int      @id @default(autoincrement())
+  title          String   @db.VarChar(255)
   description    String?
-  startDate      DateTime? @db.Timestamp(6)
-  endDate        DateTime? @db.Timestamp(6)
-  fullDay        Boolean?
-  authorId       Int
-  participantIds Int[]
+  startDate      DateTime @db.Timestamp(6)
+  endDate        DateTime @db.Timestamp(6)
+  fullDay        Boolean
+  authorId       String   @db.VarChar(255)
+  participantIds String[] @db.VarChar(255)
   locationId     Int
-  color          String?   @db.VarChar(7)
-  User           User      @relation(fields: [authorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  Location       Location  @relation(fields: [locationId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  color          String?  @db.VarChar(7)
+  User           User     @relation(fields: [authorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Location       Location @relation(fields: [locationId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model Friendship {
   id          Int                @id @default(autoincrement())
-  requesterId Int
-  recipientId Int
+  requesterId String             @db.VarChar(255)
+  recipientId String             @db.VarChar(255)
   status      friendshipStatuses
   recipient   User               @relation("Friendship_recipientIdToUser", fields: [recipientId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   requester   User               @relation("Friendship_requesterIdToUser", fields: [requesterId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -36,13 +36,13 @@ model Location {
   name     String  @db.VarChar(255)
   lat      Float
   lon      Float
-  authorId Int
+  authorId String  @db.VarChar(255)
   User     User    @relation(fields: [authorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   Event    Event[]
 }
 
 model User {
-  id                                      Int           @id @default(autoincrement())
+  id                                      String        @id @db.VarChar(255)
   username                                String        @unique @db.VarChar(255)
   email                                   String        @unique @db.VarChar(255)
   firstName                               String        @db.VarChar(255)
