@@ -1,4 +1,5 @@
-import { Router } from "express";
+import cors from "cors";
+import express, { Router } from "express";
 import isAuthenticated from "../middleware/isAuthenticated";
 import authRouter from "./auth";
 import eventsRouter from "./events";
@@ -6,6 +7,11 @@ import locationsRouter from "./locations";
 import usersRouter from "./users";
 
 const router = Router();
+
+router.use(cors());
+
+router.use(express.urlencoded({ extended: true }));
+router.use(express.json());
 
 router.use("/auth", authRouter);
 router.use("/users", isAuthenticated, usersRouter);
