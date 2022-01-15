@@ -1,22 +1,27 @@
-import { Router } from "express";
+import { NextFunction, Request, Response, Router } from "express";
+import { checkSchema, validationResult } from "express-validator";
+import ApiResponse from "../lib/apiResponse";
+import eventsSchema from "../lib/inputSchemas/eventsSchema";
 import db from "../lib/prisma";
 
 const eventsRouter = Router();
 
 interface Body {
-  title?: string;
+  title: string;
   description?: string;
-  startDate?: string;
-  endDate?: string;
-  fullDay?: boolean;
-  authorId?: string;
+  startDate: string;
+  endDate: string;
+  fullDay: boolean;
+  authorId: string;
   participantIds?: string[];
-  locationId?: number;
+  locationId: number;
   color?: string;
 }
 
-eventsRouter.post("/", (req, res) => {
-  (async () => {
+eventsRouter.post(
+  "/",
+  checkSchema(eventsSchema),
+  async (req: Request, res: Response, next: NextFunction) => {
     const {
       title,
       description,
@@ -29,15 +34,15 @@ eventsRouter.post("/", (req, res) => {
       color,
     }: Body = req.body;
 
-    if (
-      !title ||
-      !startDate ||
-      !endDate ||
-      !authorId ||
-      fullDay === undefined ||
-      !locationId
-    ) {
-      return res.sendStatus(400);
+    const apiResponse = new ApiResponse(res, next);
+
+    const result = validationResult(req);
+
+    console.log(result);
+
+    if (!result.isEmpty()) {
+      apiResponse.error.badRequest(result);
+      return;
     }
 
     try {
@@ -55,13 +60,11 @@ eventsRouter.post("/", (req, res) => {
         },
       });
 
-      return res.status(201).send(event);
-    } catch (e) {
-      console.log(e);
+      apiResponse.success.created("event created", event);
+    } catch (e: any) {
+      apiResponse.error.internalServerError([e.message]);
     }
-
-    return res.sendStatus(200);
-  })();
-});
+  }
+);
 
 export default eventsRouter;
