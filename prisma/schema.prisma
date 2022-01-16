@@ -8,18 +8,18 @@ datasource db {
 }
 
 model Event {
-  id             Int      @id @default(autoincrement())
-  title          String   @db.VarChar(255)
+  id             Int       @id @default(autoincrement())
+  title          String    @db.VarChar(255)
   description    String?
-  startDate      DateTime @db.Timestamp(6)
-  endDate        DateTime @db.Timestamp(6)
+  startDate      DateTime  @db.Timestamp(6)
+  endDate        DateTime  @db.Timestamp(6)
   fullDay        Boolean
-  authorId       String   @db.VarChar(255)
-  participantIds String[] @db.VarChar(255)
-  locationId     Int
-  color          String?  @db.VarChar(7)
-  User           User     @relation(fields: [authorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  Location       Location @relation(fields: [locationId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  authorId       String    @db.VarChar(255)
+  participantIds String[]  @db.VarChar(255)
+  locationId     Int?
+  color          String?   @db.VarChar(7)
+  User           User      @relation(fields: [authorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Location       Location? @relation(fields: [locationId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model Friendship {

@@ -14,7 +14,7 @@ interface Body {
   fullDay: boolean;
   authorId: string;
   participantIds?: string[];
-  locationId: number;
+  locationId?: number;
   color?: string;
 }
 

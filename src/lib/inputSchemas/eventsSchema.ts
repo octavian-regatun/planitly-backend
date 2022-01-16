@@ -43,11 +43,6 @@ const eventsSchema: Schema = {
       errorMessage: "fullDay must be a boolean",
     },
   },
-  locationId: {
-    isInt: {
-      errorMessage: "locationId must be an integer",
-    },
-  },
 };
 
 export default eventsSchema;
