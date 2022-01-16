@@ -1,7 +1,7 @@
 import { Schema } from "express-validator";
 import { isStringValidDate } from "../dateUtilities";
 
-const eventsSchema: Schema = {
+const eventsPostSchema: Schema = {
   title: {
     isString: {
       errorMessage: "title must be a string",
@@ -45,4 +45,4 @@ const eventsSchema: Schema = {
   },
 };
 
-export default eventsSchema;
+export default eventsPostSchema;

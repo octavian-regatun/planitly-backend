@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { checkSchema, validationResult } from "express-validator";
 import ApiResponse from "../lib/apiResponse";
-import eventsSchema from "../lib/inputSchemas/eventsSchema";
+import eventsPostSchema from "../lib/inputSchemas/eventsSchema";
 import db from "../lib/prisma";
 
 const eventsRouter = Router();
@@ -20,7 +20,7 @@ interface Body {
 
 eventsRouter.post(
   "/",
-  checkSchema(eventsSchema),
+  checkSchema(eventsPostSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     const {
       title,
