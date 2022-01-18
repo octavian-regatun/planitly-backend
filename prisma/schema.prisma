@@ -34,8 +34,8 @@ model Friendship {
 model Location {
   id       Int     @id @default(autoincrement())
   name     String  @db.VarChar(255)
-  lat      Float
-  lon      Float
+  lat      Float?
+  lon      Float?
   authorId String  @db.VarChar(255)
   User     User    @relation(fields: [authorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   Event    Event[]

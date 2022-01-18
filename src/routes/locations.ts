@@ -1,21 +1,30 @@
-import { Router } from "express";
+import { NextFunction, Request, Response, Router } from "express";
+import { checkSchema, validationResult } from "express-validator";
+import ApiResponse from "../lib/apiResponse";
+import locationsPostSchema from "../lib/inputSchemas/locationsSchema";
 import db from "../lib/prisma";
 
 const locationsRouter = Router();
 
 interface Body {
-  name?: string;
+  name: string;
   lat?: number;
   lon?: number;
-  authorId?: string;
+  authorId: string;
 }
 
-locationsRouter.post("/", (req, res) => {
-  (async () => {
+locationsRouter.post(
+  "/",
+  checkSchema(locationsPostSchema),
+  async (req: Request, res: Response, next: NextFunction) => {
     const { name, lat, lon, authorId }: Body = req.body;
 
-    if (!name || lat === undefined || lon === undefined || !authorId) {
-      return res.sendStatus(400);
+    const apiResponse = new ApiResponse(res, next);
+
+    const result = validationResult(req);
+
+    if (!result.isEmpty()) {
+      apiResponse.error.badRequest(result);
     }
 
     try {
@@ -27,12 +36,12 @@ locationsRouter.post("/", (req, res) => {
           authorId,
         },
       });
-      return res.status(201).send(location);
-    } catch (error) {
-      console.log(error);
-      return res.sendStatus(500);
+
+      apiResponse.success.created("location created", location);
+    } catch (e: any) {
+      apiResponse.error.internalServerError(e);
     }
-  })();
-});
+  }
+);
 
 export default locationsRouter;
