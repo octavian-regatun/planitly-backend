@@ -38,8 +38,6 @@ eventsRouter.post(
 
     const result = validationResult(req);
 
-    console.log(result);
-
     if (!result.isEmpty()) {
       apiResponse.error.badRequest(result);
       return;
