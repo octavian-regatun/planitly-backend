@@ -1,5 +1,4 @@
 import { Schema } from "express-validator";
-import { isStringValidDate } from "../dateUtilities";
 
 const locationsPostSchema: Schema = {
   name: {
