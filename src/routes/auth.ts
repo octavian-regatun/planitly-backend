@@ -1,39 +1,51 @@
 // authentication only with google at the moment
 
-import { User } from '@prisma/client'
-import { Router } from 'express'
-import { createJwt, getPayload } from '../lib/jwt'
-import db from '../lib/prisma'
-import { isUserInDatabase, saveUser } from '../lib/user'
+import { User } from "@prisma/client";
+import { NextFunction, Request, Response, Router } from "express";
+import { checkSchema, validationResult } from "express-validator";
+import ApiResponse from "../lib/apiResponse";
+import authPostSchema from "../lib/inputSchemas/authSchema";
+import { createJwt, getPayload } from "../lib/jwt";
+import db from "../lib/prisma";
+import { isUserInDatabase, saveUser } from "../lib/user";
 
-const authRouter = Router()
+const authRouter = Router();
 
 interface Body {
-  tokenId?: string
+  tokenId: string;
 }
 
-authRouter.post('/', (req, res) => {
-  void (async () => {
-    const { tokenId }: Body = req.body
+authRouter.post(
+  "/",
+  checkSchema(authPostSchema),
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { tokenId }: Body = req.body;
 
-    if (tokenId === undefined) return res.sendStatus(400)
+    const apiResponse = new ApiResponse(res, next);
 
-    const payload = await getPayload(tokenId)
+    const result = validationResult(req);
+
+    if (!result.isEmpty()) {
+      apiResponse.error.badRequest(result);
+      return;
+    }
+
+    const payload = await getPayload(tokenId);
 
     if (await isUserInDatabase(payload.sub)) {
-      const existingUser = await db.user.findUnique({
-        where: { id: payload.sub }
-      }) as User
+      const existingUser = (await db.user.findUnique({
+        where: { id: payload.sub },
+      })) as User;
 
-      return res.send(createJwt(existingUser))
+      return res.send(createJwt(existingUser));
     } else {
-      const newUser = await saveUser(payload)
+      const newUser = await saveUser(payload);
 
-      const jwt = createJwt(newUser)
+      const jwt = createJwt(newUser);
 
-      return res.send(jwt)
+      return res.send(jwt);
     }
-  })()
-})
+  }
+);
 
-export default authRouter
+export default authRouter;

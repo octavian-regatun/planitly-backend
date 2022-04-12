@@ -1,28 +1,32 @@
-import { Router } from 'express'
-import db from '../lib/prisma'
+import { NextFunction, Request, Response, Router } from "express";
+import { checkSchema } from "express-validator";
+import usersGetSchema from "../lib/inputSchemas/usersSchema";
+import db from "../lib/prisma";
 
-const usersRouter = Router()
+const usersRouter = Router();
 
 interface Params {
-  id: string
+  id: string;
 }
 
-usersRouter.get('/', (req, res) => {
+usersRouter.get("/", (req, res) => {
   void (async () => {
-    return res.sendStatus(200)
-  })()
-})
+    return res.sendStatus(200);
+  })();
+});
 
-usersRouter.get('/:id', (req, res) => {
-  void (async () => {
-    const { id }: Params = req.params
+usersRouter.get(
+  "/:id",
+  checkSchema(usersGetSchema),
+  async (req: Request<Params>, res: Response, next: NextFunction) => {
+    const { id } = req.params;
 
     if (id === req.id) {
-      return res.send(await db.user.findUnique({ where: { id } }))
+      return res.send(await db.user.findUnique({ where: { id } }));
     } else {
-      return res.sendStatus(404)
+      return res.sendStatus(404);
     }
-  })()
-})
+  }
+);
 
-export default usersRouter
+export default usersRouter;
