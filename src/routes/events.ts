@@ -1,7 +1,10 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { checkSchema, validationResult } from "express-validator";
 import ApiResponse from "../lib/apiResponse";
-import eventsPostSchema from "../lib/inputSchemas/eventsSchema";
+import {
+  eventsGetSchema,
+  eventsPostSchema,
+} from "../lib/inputSchemas/eventsSchema";
 import db from "../lib/prisma";
 
 const eventsRouter = Router();
@@ -17,6 +20,33 @@ interface Body {
   locationId?: number;
   color?: string;
 }
+
+eventsRouter.get(
+  "/",
+  checkSchema(eventsGetSchema),
+  async (req: Request, res: Response, next: NextFunction) => {
+    const apiResponse = new ApiResponse(res, next);
+
+    const result = validationResult(req);
+
+    if (!result.isEmpty()) {
+      apiResponse.error.badRequest(result);
+      return;
+    }
+
+    try {
+      const events = await db.event.findMany({
+        where: {
+          OR: [{ authorId: req.id! }, { participantIds: { has: req.id } }],
+        },
+      });
+
+      res.send(events);
+    } catch (e: any) {
+      apiResponse.error.internalServerError([e.message]);
+    }
+  }
+);
 
 eventsRouter.post(
   "/",
@@ -62,6 +92,13 @@ eventsRouter.post(
     } catch (e: any) {
       apiResponse.error.internalServerError([e.message]);
     }
+  }
+);
+
+eventsRouter.patch(
+  "/:id",
+  (req: Request, res: Response, next: NextFunction) => {
+    
   }
 );
 

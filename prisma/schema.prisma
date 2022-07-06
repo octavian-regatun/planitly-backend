@@ -23,12 +23,12 @@ model Event {
 }
 
 model Friendship {
-  id          Int                @id @default(autoincrement())
-  requesterId String             @db.VarChar(255)
-  recipientId String             @db.VarChar(255)
-  status      friendshipStatuses
-  recipient   User               @relation("Friendship_recipientIdToUser", fields: [recipientId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  requester   User               @relation("Friendship_requesterIdToUser", fields: [requesterId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id          Int    @id @default(autoincrement())
+  requesterId String @db.VarChar(255)
+  recipientId String @db.VarChar(255)
+  status      String @db.VarChar(255)
+  recipient   User   @relation("Friendship_recipientIdToUser", fields: [recipientId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  requester   User   @relation("Friendship_requesterIdToUser", fields: [requesterId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model Location {
@@ -42,43 +42,19 @@ model Location {
 }
 
 model User {
-  id                                      String        @id @db.VarChar(255)
-  username                                String        @unique @db.VarChar(255)
-  email                                   String        @unique @db.VarChar(255)
-  firstName                               String        @db.VarChar(255)
-  lastName                                String        @db.VarChar(255)
-  birthday                                DateTime?     @db.Date
-  role                                    roles
-  gender                                  genders
-  authProvider                            authProviders
-  loggedAt                                DateTime      @default(now()) @db.Timestamp(6)
-  createdAt                               DateTime      @default(now()) @db.Timestamp(6)
+  id                                      String       @id @db.VarChar(255)
+  username                                String       @unique @db.VarChar(255)
+  email                                   String       @unique @db.VarChar(255)
+  firstName                               String       @db.VarChar(255)
+  lastName                                String       @db.VarChar(255)
+  birthday                                DateTime?    @db.Date
+  role                                    String       @db.VarChar(255)
+  gender                                  String       @db.VarChar(255)
+  authProvider                            String       @db.VarChar(255)
+  loggedAt                                DateTime     @default(now()) @db.Timestamp(6)
+  createdAt                               DateTime     @default(now()) @db.Timestamp(6)
   Event                                   Event[]
-  Friendship_Friendship_recipientIdToUser Friendship[]  @relation("Friendship_recipientIdToUser")
-  Friendship_Friendship_requesterIdToUser Friendship[]  @relation("Friendship_requesterIdToUser")
+  Friendship_Friendship_recipientIdToUser Friendship[] @relation("Friendship_recipientIdToUser")
+  Friendship_Friendship_requesterIdToUser Friendship[] @relation("Friendship_requesterIdToUser")
   Location                                Location[]
-}
-
-enum genders {
-  male
-  female
-  unknown
-}
-
-enum roles {
-  basic
-  plus
-  ultimate
-}
-
-enum authProviders {
-  google
-  facebook
-  vanilla
-  apple
-}
-
-enum friendshipStatuses {
-  accepted
-  pending
 }
